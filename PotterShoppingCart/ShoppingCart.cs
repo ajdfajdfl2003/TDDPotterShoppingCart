@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 
 namespace PotterShoppingCart
@@ -7,6 +6,7 @@ namespace PotterShoppingCart
     public class ShoppingCart
     {
         private List<Book> _books;
+
         private Dictionary<int, double> _ratioDiscount = new Dictionary<int, double>() {
             { 1, 1 },
             { 2, 0.95 },
@@ -15,7 +15,6 @@ namespace PotterShoppingCart
             { 5, 0.75 }
         };
 
-
         public ShoppingCart(List<Book> books)
         {
             this._books = books;
@@ -23,15 +22,30 @@ namespace PotterShoppingCart
 
         public double CalculateAmount()
         {
-            var bookCount = this._books.Count(x => x.Quantity > 0);
-
-            if (bookCount == 0)
+            var maxCount = this._books.Max(x => x.Quantity);
+            double subTotal = 0;
+            if (maxCount == 0)
             {
                 return 0;
             }
 
-            var discount = this._ratioDiscount.Count() < bookCount ? 1 : this._ratioDiscount[bookCount];
-            return this._books.Sum(x => x.UnitPrice * x.Quantity) * discount;
+            for (var i = maxCount; i > 0; i--)
+            {
+                int booksSetCount = 0;
+                double _price = 0;
+                foreach (var _book in this._books.Where(x => x.Quantity > 0))
+                {
+                    _price += _book.UnitPrice;
+                    booksSetCount++;
+                    _book.Quantity--;
+                }
+
+                var discount = this._ratioDiscount.Count() < booksSetCount ? 1 : this._ratioDiscount[booksSetCount];
+                subTotal += _price * discount;
+                maxCount--;
+            }
+
+            return subTotal;
         }
     }
 }
