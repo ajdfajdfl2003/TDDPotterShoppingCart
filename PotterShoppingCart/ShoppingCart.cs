@@ -9,7 +9,8 @@ namespace PotterShoppingCart
         private List<Book> _books;
         private Dictionary<int, double> _ratioDiscount = new Dictionary<int, double>() {
             { 1, 1 },
-            { 2, 0.95 }
+            { 2, 0.95 },
+            { 3, 0.9 }
         };
 
 
