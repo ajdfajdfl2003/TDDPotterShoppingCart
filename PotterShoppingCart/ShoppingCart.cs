@@ -6,6 +6,7 @@ namespace PotterShoppingCart
     public class ShoppingCart
     {
         private List<Book> _books;
+        private double _subTotal;
 
         private Dictionary<int, double> _ratioDiscount = new Dictionary<int, double>() {
             { 1, 1 },
@@ -22,30 +23,38 @@ namespace PotterShoppingCart
 
         public double CalculateAmount()
         {
-            var maxCount = this._books.Max(x => x.Quantity);
-            double subTotal = 0;
-            if (maxCount == 0)
+            //計算書的最大數量
+            var maxBooksCount = this._books.Max(x => x.Quantity);
+
+            if (maxBooksCount == 0)
             {
                 return 0;
             }
 
-            for (var i = maxCount; i > 0; i--)
+            for (var i = maxBooksCount; i > 0; i--)
             {
+                double price = 0;
                 int booksSetCount = 0;
-                double _price = 0;
-                foreach (var _book in this._books.Where(x => x.Quantity > 0))
+                var unCheckBooks = this._books.Where(x => x.Quantity > 0);
+
+                foreach (var book in unCheckBooks)
                 {
-                    _price += _book.UnitPrice;
+                    price += book.UnitPrice;
                     booksSetCount++;
-                    _book.Quantity--;
+                    book.Quantity--;
                 }
 
-                var discount = this._ratioDiscount.Count() < booksSetCount ? 1 : this._ratioDiscount[booksSetCount];
-                subTotal += _price * discount;
-                maxCount--;
+                double disCount = GetRatioDiscount(booksSetCount);
+                this._subTotal += price * disCount;
+                maxBooksCount--;
             }
 
-            return subTotal;
+            return this._subTotal;
+        }
+
+        private double GetRatioDiscount(int booksSetCount)
+        {
+            return this._ratioDiscount.Count() < booksSetCount ? 1 : this._ratioDiscount[booksSetCount];
         }
     }
 }
