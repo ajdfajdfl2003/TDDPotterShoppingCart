@@ -144,5 +144,32 @@ namespace PotterShoppingCart.Tests
             var expected = 375;
             actual.Should().Be(expected);
         }
+
+        [TestMethod]
+        public void 一二集各買了一本_第三集買了兩本_價格應為370元()
+        {
+            //Scenario: 一二集各買了一本，第三集買了兩本，價格應為100*3*0.9 + 100 = 370
+            //	Given 第一集買了 1 本
+            //	And 第二集買了 1 本
+            //	And 第三集買了 2 本
+            //	And 第四集買了 0 本
+            //	And 第五集買了 0 本
+            //	When 結帳
+            //	Then 價格應為 370 元
+            var books = new List<Book>
+            {
+                new Book() { Category = "Harry Potter", Episode = "First",  Quantity = 1, UnitPrice = 100},
+                new Book() { Category = "Harry Potter", Episode = "Second",  Quantity = 1, UnitPrice = 100},
+                new Book() { Category = "Harry Potter", Episode = "Third",  Quantity = 2, UnitPrice = 100}
+            };
+            var target = new ShoppingCart(books);
+
+            //act
+            var actual = target.CalculateAmount();
+
+            //assert
+            var expected = 370;
+            actual.Should().Be(expected);
+        }
     }
 }
